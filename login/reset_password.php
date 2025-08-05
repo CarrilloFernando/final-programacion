@@ -2,19 +2,19 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Restablecer Contraseña</title>
+    <title>Recuperar Contraseña</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
     <div class="form-container">
-        <h2>Restablecer Contraseña</h2>
-        <form id="reset-password-form">
-            <input type="email" id="email" placeholder="Correo Electrónico" required>
-            <button type="submit">Solicitar Restablecimiento</button><br></br>
-            <a href="login_principal.php">Volver a atras</a>
+        <h2>Recuperar Contraseña</h2>
+        <form method="POST" action="../logica/procesar_reset_password.php">
+            <input type="email" name="email" placeholder="Correo electrónico" required>
+            <div class="g-recaptcha" data-sitekey="6LdVknMqAAAAAKWuPqraB1YnVFMvAwMJ3zsL_53_"></div>
+            <button type="submit">Enviar enlace de recuperación</button>
         </form>
+        <p><a href="login_principal.php">Volver al login</a></p>
     </div>
-    <script src="reset_password.js"></script>
 </body>
 </html>

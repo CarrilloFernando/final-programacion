@@ -1,0 +1,36 @@
+<?php
+require_once '../database/db.php'; // ruta a tu clase
+
+// Mostrar errores si los hay
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nombre_usuario = $_POST['nombre_usuario'] ?? '';
+    $apellido = $_POST['apellido'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $recaptcha = $_POST['g-recaptcha-response'] ?? '';
+
+    // Validar reCAPTCHA
+    $secret = '6LdVknMqAAAAAKge_ZujvkGawUMfYBYBLtoIWzjs';
+    $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$recaptcha");
+    $responseKeys = json_decode($response, true);
+
+    if (!$responseKeys["success"]) {
+        die("❌ Captcha no verificado.");
+    }
+
+    if (empty($nombre_usuario) || empty($apellido) || empty($email) || empty($password)) {
+        die("❌ Todos los campos son obligatorios.");
+    }
+
+    // Crear objeto y llamar función de inserción
+    $db = new Database();
+    $conn = $db->obtenerConexion(); // importante para que funcione internamente
+
+    $resultado = $db->insertarUsuario($nombre_usuario, $apellido, $email, $password);
+
+    echo $resultado['message'];
+}

@@ -12,10 +12,9 @@
 <body>
     <div class="form-container">
         <h2>FORO VIRTUAL RG</h2>
-        <form id="loginForm">
-            <input type="text" id="usernameOrEmail" placeholder="Nombre Usuario o email" required>
-            <input type="text" placeholder="Apellido" required>
-            <input type="password" id="password" placeholder="Contraseña" required>
+        <form id="loginForm" method="POST" action="../logica/procesar_login.php">
+            <input type="text" id="usernameOrEmail" name="usernameOrEmail" placeholder="Nombre Usuario o email" required>
+            <input type="password" id="password" name="password" placeholder="Contraseña" required>
             <div class="capt">
                 <div class="captcha-container">
                     <div class="g-recaptcha" data-sitekey="6LdVknMqAAAAAKWuPqraB1YnVFMvAwMJ3zsL_53_"></div>
@@ -26,9 +25,9 @@
         </form>
         <p>¿No tienes una cuenta? <a href="registro.php">Regístrate</a></p>
         <p><a href="reset_password.php">¿Olvidaste tu contraseña?</a></p>
-        <div id="loginMessage"></div>
+        
     </div>
-    <script src="logearse.js"></script>
+    
 </body>
 
 </html>
