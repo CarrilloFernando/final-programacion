@@ -1,69 +1,101 @@
+/* Reset básico */
 * {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
 body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to right, #2c3e50, #4ca1af);
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color:#44465e;
-
+    padding: 20px;
 }
 
 .form-container {
-    background-color: #8c9293;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 340px;
-    text-align: center;
-    box-shadow: 10px 10px 10px #444;
+    background-color: #ffffff;
+    padding: 30px 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
 }
 
 h2 {
+    text-align: center;
+    color: #2c3e50;
     margin-bottom: 20px;
-    color: #333;
 }
 
-form input[type="text"],
-form input[type="email"],
-form input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.captcha-container {
+form {
     display: flex;
-    justify-content: center;
-    margin: 5px;
+    flex-direction: column;
 }
 
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    border-color: #4ca1af;
+    outline: none;
+}
 
 button {
-    width: 100%;
-    padding: 10px;
-    background-color: #283db4;
-    color: #fff;
+    padding: 12px;
+    background-color: #4ca1af;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 button:hover {
-    background-color: #172784;
+    background-color: #357f89;
+}
+
+p {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
 }
 
 a {
-    color: #1b30b9;
+    color: #4ca1af;
     text-decoration: none;
 }
 
 a:hover {
     text-decoration: underline;
+}
+
+/* reCAPTCHA container */
+.captcha-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+    .form-container {
+        padding: 25px 20px;
+    }
+
+    input, button {
+        font-size: 14px;
+    }
 }

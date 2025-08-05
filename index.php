@@ -1,61 +1,42 @@
+<?php
+session_start();
+
+// Redirigir al login si no hay sesión
+if (!isset($_SESSION['id_usuario'])) {
+    header("Location: login/login_principal.php");
+    exit();
+}
+
+$nombre = $_SESSION['nombre_usuario'];
+$rol = $_SESSION['rol'];
+?>
+
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barra de Navegación Fija</title>
+    <title>Dashboard - Foro Virtual</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
+    <div class="form-container">
+        <h2>Bienvenido/a, <?php echo htmlspecialchars($nombre); ?> 👋</h2>
 
-    <!-- Barra de Navegación -->
-    <nav class="navbar">
-        <div class="nav-links">
-            <a href="index.php">Inicio</a>
-        </div>
+        <p>Has iniciado sesión correctamente.</p>
 
-        <!-- Barra de búsqueda -->
-        <div class="search-bar">
-            <input type="text" placeholder="Buscar...">
-        </div>
+        <hr>
 
-        <!-- Botones de Crear y Notificaciones -->
-        <div class="nav-links">
-            <div class="dropdown">
-                <button class="icon">Crear +</button>
-                <div class="dropdown-content">
-                    <a href="crear_post.php">Crear Post</a>
-                    <a href="crear_difusion.php">Crear Difusión</a>
-                </div>
-            </div>
+        <h3>Menú</h3>
+        <ul>
+            <li><a href="perfil.php">🧑 Perfil</a></li>
 
-            <div class="icon">🔔 Notificaciones</div>
+            <?php if ($rol == 1): ?>
+                <li><a href="admin/usuarios.php">👥 Administración de Usuarios</a></li>
+                <li><a href="admin/logs.php">📋 Ver Logs</a></li>
+            <?php endif; ?>
 
-
-        </div>
-
-        <!-- Menú de perfil -->
-        <div class="profile-menu">
-            <div class="dropdown">
-                <button class="icon">Perfil</button>
-                <div class="dropdown-content">
-                    <a href="perfil_usuario.php">Entrar al Perfil</a>
-                    <a href="#">Configuración</a>
-                    <a href="#">Cerrar Sesión</a>
-
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Contenido Principal -->
-    <div class="content">
-        <h1>Bienvenido al foro vitual</h1>
-
+            <li><a href="logout.php">🚪 Cerrar Sesión</a></li>
+        </ul>
     </div>
-
 </body>
-
 </html>

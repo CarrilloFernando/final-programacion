@@ -29,42 +29,43 @@ class Database
 
 
     // Función para validar usuario
-public function validarUsuario($nombre_o_email, $password) {   
-    $query = "SELECT id_usuario, nombre_usuario, password, verificado, id_estado, id_rol FROM usuarios 
+    public function validarUsuario($nombre_o_email, $password)
+    {
+        $query = "SELECT id_usuario, nombre_usuario, password, verificado, id_estado, id_rol FROM usuarios 
                 WHERE nombre_usuario = :nombre_o_email OR email = :nombre_o_email LIMIT 1";
-    $stmt = $this->conn->prepare($query);
-    $stmt->bindParam(':nombre_o_email', $nombre_o_email);
-    $stmt->execute();
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':nombre_o_email', $nombre_o_email);
+        $stmt->execute();
 
-    if ($stmt->rowCount() > 0) {
-        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($stmt->rowCount() > 0) {
+            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($usuario['verificado'] == 0) {
-            return ["status" => "error", "message" => "La cuenta no está verificada."];
-        }
+            if ($usuario['verificado'] == 0) {
+                return ["status" => "error", "message" => "La cuenta no está verificada."];
+            }
 
-        if ($usuario['id_estado'] != 1) {
-            return ["status" => "error", "message" => "La cuenta está suspendida o eliminada."];
-        }
+            if ($usuario['id_estado'] != 1) {
+                return ["status" => "error", "message" => "La cuenta está suspendida o eliminada."];
+            }
 
-        if (password_verify($password, $usuario['password'])) {
-            return [
-                "status" => "success",
-                "message" => "Sesión iniciada correctamente.",
-                "user" => [
-                    "id_usuario" => $usuario['id_usuario'],
-                    "nombre_usuario" => $usuario['nombre_usuario'],
-                    "id_estado" => $usuario['id_estado'],
-                    "id_rol" => $usuario['id_rol']
-                ]
-            ];
+            if (password_verify($password, $usuario['password'])) {
+                return [
+                    "status" => "success",
+                    "message" => "Sesión iniciada correctamente.",
+                    "user" => [
+                        "id_usuario" => $usuario['id_usuario'],
+                        "nombre_usuario" => $usuario['nombre_usuario'],
+                        "id_estado" => $usuario['id_estado'],
+                        "id_rol" => $usuario['id_rol']
+                    ]
+                ];
+            } else {
+                return ["status" => "error", "message" => "Contraseña incorrecta."];
+            }
         } else {
-            return ["status" => "error", "message" => "Contraseña incorrecta."];
+            return ["status" => "error", "message" => "El usuario no existe."];
         }
-    } else {
-        return ["status" => "error", "message" => "El usuario no existe."];
     }
-}
 
 
     // Nuevo metodo para obtener usuarios
@@ -163,6 +164,7 @@ public function validarUsuario($nombre_o_email, $password) {
         }
     }
 
+
     public function enviarCorreoRecuperacion($email, $token_recuperacion)
     {
         $mail = new PHPMailer(true);
@@ -187,9 +189,10 @@ public function validarUsuario($nombre_o_email, $password) {
             $mail->Body = "
                 <h1>Recuperación de Contraseña</h1>
                 <p>Hemos recibido una solicitud para restablecer tu contraseña. Haz clic en el enlace a continuación para establecer una nueva contraseña:</p>
-                <a href='http://localhost/parcial/login/cambiar_password.php?token=$token_recuperacion'>Restablecer Contraseña</a>
+                <a href='http://localhost/finalprogramacion/login/cambiar_password.php?token=$token_recuperacion'>Restablecer Contraseña</a>
                 <p>Si no solicitaste este cambio, ignora este correo.</p>
             ";
+
 
 
             // Enviar el correo
