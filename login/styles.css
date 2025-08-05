@@ -1,0 +1,69 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color:#44465e;
+
+}
+
+.form-container {
+    background-color: #8c9293;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 340px;
+    text-align: center;
+    box-shadow: 10px 10px 10px #444;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.captcha-container {
+    display: flex;
+    justify-content: center;
+    margin: 5px;
+}
+
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #283db4;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #172784;
+}
+
+a {
+    color: #1b30b9;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
