@@ -1,12 +1,5 @@
 <?php
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-require '../PHPMailer/src/PHPMailer.php';
-require '../PHPMailer/src/SMTP.php';
-require '../PHPMailer/src/Exception.php';
-
 class Database
 {
     private $host = "localhost";
@@ -26,7 +19,6 @@ class Database
         }
         return $this->conn;
     }
-
 
     // Función para validar usuario
     public function validarUsuario($nombre_o_email, $password)
@@ -67,8 +59,6 @@ class Database
         }
     }
 
-
-    // Nuevo metodo para obtener usuarios
     public function getUsuarios()
     {
         $query = "SELECT * FROM usuarios";
@@ -77,7 +67,6 @@ class Database
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Metodo para insertar un nuevo usuario
     public function insertarUsuario($nombre_usuario, $apellido, $email, $password)
     {
         // Verificar si el nombre de usuario ya existe
@@ -87,7 +76,6 @@ class Database
         $stmtCheckUsername->execute();
 
         if ($stmtCheckUsername->fetchColumn() > 0) {
-            // Retornar un error específico si el nombre de usuario ya existe
             return ["status" => "error", "message" => "El nombre de usuario ya existe."];
         }
 
@@ -98,17 +86,12 @@ class Database
         $stmtCheckEmail->execute();
 
         if ($stmtCheckEmail->fetchColumn() > 0) {
-            // Retornar un error específico si el email ya existe
             return ["status" => "error", "message" => "El email ya está registrado."];
         }
 
-        // Hashear la contraseña
         $passwordHash = password_hash($password, PASSWORD_BCRYPT);
-
-        // Generar un token de verificación único
         $token_verificacion = bin2hex(random_bytes(16));
 
-        // Insertar el nuevo usuario con estado "Pendiente de verificación"
         $queryInsert = "INSERT INTO usuarios (nombre_usuario, apellido, email, password, verificado, token_verificacion, id_estado) 
                         VALUES (:nombre_usuario, :apellido, :email, :password, 0, :token_verificacion, 4)";
         $stmtInsert = $this->conn->prepare($queryInsert);
@@ -126,27 +109,28 @@ class Database
         }
     }
 
-
-
     public function enviarCorreoVerificacion($email, $token_verificacion)
     {
-        $mail = new PHPMailer(true);
+        // Cargar PHPMailer solo si aún no fue cargado
+        if (!class_exists('PHPMailer\PHPMailer\PHPMailer')) {
+            require_once '../PHPMailer/src/PHPMailer.php';
+            require_once '../PHPMailer/src/SMTP.php';
+            require_once '../PHPMailer/src/Exception.php';
+        }
 
+        $mail = new PHPMailer\PHPMailer\PHPMailer(true);
         try {
-            // Configuracion del servidor de correo
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'florrolito@gmail.com'; //dirección de corro
-            $mail->Password = 'soez kekb uxzb umac'; //contraseña de aplicación de Gmail
+            $mail->Username = 'florrolito@gmail.com';
+            $mail->Password = 'soez kekb uxzb umac';
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
-            // Configuración del remitente y destinatario
             $mail->setFrom('florrolito@gmail.com', 'foro_virtual');
-            $mail->addAddress($email); // Email y nombre del destinatario
+            $mail->addAddress($email);
 
-            // Contenido del correo
             $mail->isHTML(true);
             $mail->Subject = 'Verificación de Cuenta';
             $mail->Body = "
@@ -156,7 +140,6 @@ class Database
                 <p>Si no solicitaste este registro, ignora este correo.</p>
             ";
 
-            // Enviar el correo
             $mail->send();
             return ["status" => "success", "message" => "Correo enviado correctamente."];
         } catch (Exception $e) {
@@ -164,26 +147,27 @@ class Database
         }
     }
 
-
     public function enviarCorreoRecuperacion($email, $token_recuperacion)
     {
-        $mail = new PHPMailer(true);
+        if (!class_exists('PHPMailer\PHPMailer\PHPMailer')) {
+            require_once '../PHPMailer/src/PHPMailer.php';
+            require_once '../PHPMailer/src/SMTP.php';
+            require_once '../PHPMailer/src/Exception.php';
+        }
 
+        $mail = new PHPMailer\PHPMailer\PHPMailer(true);
         try {
-            // Configuración del servidor SMTP
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
             $mail->Username = 'florrolito@gmail.com';
-            $mail->Password = 'soez kekb uxzb umac'; // Contraseña de aplicación de Gmail
+            $mail->Password = 'soez kekb uxzb umac';
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
-            // Configuración del remitente y destinatario
             $mail->setFrom('florrolito@gmail.com', 'Foro Virtual');
             $mail->addAddress($email);
 
-            // Contenido del correo
             $mail->isHTML(true);
             $mail->Subject = 'Recuperación de Contraseña';
             $mail->Body = "
@@ -193,9 +177,6 @@ class Database
                 <p>Si no solicitaste este cambio, ignora este correo.</p>
             ";
 
-
-
-            // Enviar el correo
             $mail->send();
             return ["status" => "success", "message" => "Correo de recuperación enviado correctamente."];
         } catch (Exception $e) {

@@ -41,6 +41,7 @@ $rol = $_SESSION['rol'];
             <div class="dropdown">
                 <button class="dropbtn">👤 Perfil</button>
                 <div class="dropdown-content">
+                    <a href="../persona.php">👥 Ver perfil</a>
                     <a href="../perfil.php">✏️ Editar Perfil</a>
                     <a href="../logout.php">🚪 Cerrar Sesión</a>
                 </div>

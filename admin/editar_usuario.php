@@ -45,10 +45,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bindParam(':id', $id);
 
     if ($stmt->execute()) {
-        header("Location: usuarios.php");
+        echo "<script>alert('✅ Usuario actualizado correctamente'); window.location.href = 'usuarios.php';</script>";
         exit();
     } else {
-        echo "Error al actualizar el usuario.";
+        echo "<script>alert('❌ Error al actualizar el usuario');</script>";
     }
 }
 
@@ -81,6 +81,7 @@ $rol = $_SESSION['rol'];
             <div class="dropdown">
                 <button class="dropbtn">👤 Perfil</button>
                 <div class="dropdown-content">
+                    <a href="../persona.php">👥 Ver perfil</a>
                     <a href="../perfil.php">✏️ Editar Perfil</a>
                     <a href="../logout.php">🚪 Cerrar Sesión</a>
                 </div>
@@ -90,29 +91,29 @@ $rol = $_SESSION['rol'];
 
     <main class="contenido">
         <h2>Editar Usuario</h2>
-        <form method="POST">
-            <label>Nombre de Usuario:</label><br>
-            <input type="text" name="nombre_usuario" value="<?= htmlspecialchars($usuario['nombre_usuario']) ?>" required><br>
+        <form method="POST" class="formulario-editar">
+            <label>Nombre de Usuario:</label>
+            <input type="text" name="nombre_usuario" value="<?= htmlspecialchars($usuario['nombre_usuario']) ?>" required>
 
-            <label>Apellido:</label><br>
-            <input type="text" name="apellido" value="<?= htmlspecialchars($usuario['apellido']) ?>" required><br>
+            <label>Apellido:</label>
+            <input type="text" name="apellido" value="<?= htmlspecialchars($usuario['apellido']) ?>" required>
 
-            <label>Email:</label><br>
-            <input type="email" name="email" value="<?= htmlspecialchars($usuario['email']) ?>" required><br>
+            <label>Email:</label>
+            <input type="email" name="email" value="<?= htmlspecialchars($usuario['email']) ?>" required>
 
-            <label>Rol:</label><br>
+            <label>Rol:</label>
             <select name="id_rol">
                 <option value="1" <?= $usuario['id_rol'] == 1 ? 'selected' : '' ?>>Administrador</option>
                 <option value="2" <?= $usuario['id_rol'] == 2 ? 'selected' : '' ?>>Usuario</option>
-            </select><br>
+            </select>
 
-            <label>Estado:</label><br>
+            <label>Estado:</label>
             <select name="id_estado">
                 <option value="1" <?= $usuario['id_estado'] == 1 ? 'selected' : '' ?>>Habilitado</option>
                 <option value="2" <?= $usuario['id_estado'] == 2 ? 'selected' : '' ?>>Eliminado</option>
                 <option value="3" <?= $usuario['id_estado'] == 3 ? 'selected' : '' ?>>Suspendido</option>
                 <option value="4" <?= $usuario['id_estado'] == 4 ? 'selected' : '' ?>>Pendiente</option>
-            </select><br><br>
+            </select>
 
             <button type="submit">Guardar Cambios</button>
         </form>

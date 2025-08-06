@@ -38,6 +38,7 @@ $rol = $_SESSION['rol']; // 1 = admin, 2 = usuario
             <div class="dropdown">
                 <button class="dropbtn">👤 Perfil</button>
                 <div class="dropdown-content">
+                    <a href="persona.php">👥 Ver perfil</a>
                     <a href="perfil.php">✏️ Editar Perfil</a>
                     <a href="logout.php">🚪 Cerrar Sesión</a>
                 </div>
@@ -48,7 +49,7 @@ $rol = $_SESSION['rol']; // 1 = admin, 2 = usuario
     <!-- Contenido -->
     <main class="contenido">
         <h1>Bienvenido/a, <?= htmlspecialchars($nombre) ?> 👋</h1>
-        <p>Estás logueado como <strong><?= $rol == 1 ? 'Administrador' : 'Usuario' ?></strong>.</p>
+        
     </main>
 
 </body>

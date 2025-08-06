@@ -9,23 +9,35 @@ require_once '../database/db.php';
 
 $db = new Database();
 $conn = $db->obtenerConexion();
-
-// Obtener usuarios
-$stmt = $conn->query("SELECT * FROM usuarios");
+$stmt = $conn->prepare("SELECT u.id_usuario, u.nombre_usuario, u.apellido, u.email, r.nombre_rol, e.nombre_estado FROM usuarios u INNER JOIN roles r ON u.id_rol = r.id_rol INNER JOIN estado_usuario e ON u.id_estado = e.id_estado");
+$stmt->execute();
 $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $rol = $_SESSION['rol'];
+$mensaje = isset($_GET['mensaje']) ? $_GET['mensaje'] : null;
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
-    <title>Administración de Usuarios</title>
+    <title>Administrar Usuarios</title>
     <link rel="stylesheet" href="../styles/dashboard.css">
+    <script>
+        window.onload = function () {
+            const mensaje = "<?php echo $mensaje; ?>";
+            if (mensaje === 'eliminado_ok') {
+                alert("✅ Usuario eliminado correctamente.");
+            } else if (mensaje === 'ya_eliminado') {
+                alert("⚠️ El usuario ya está eliminado.");
+            } else if (mensaje === 'no_encontrado') {
+                alert("❌ Usuario no encontrado.");
+            } else if (mensaje === 'error') {
+                alert("❌ Error al eliminar el usuario.");
+            }
+        };
+    </script>
 </head>
-
 <body>
     <nav class="navbar">
         <div class="nav-left">
@@ -45,6 +57,7 @@ $rol = $_SESSION['rol'];
             <div class="dropdown">
                 <button class="dropbtn">👤 Perfil</button>
                 <div class="dropdown-content">
+                    <a href="../persona.php">👥 Ver perfil</a>
                     <a href="../perfil.php">✏️ Editar Perfil</a>
                     <a href="../logout.php">🚪 Cerrar Sesión</a>
                 </div>
@@ -54,37 +67,36 @@ $rol = $_SESSION['rol'];
 
     <main class="contenido">
         <h2>Administración de Usuarios</h2>
-        <table border="1" cellpadding="10">
-            <tr>
-                <th>ID</th>
-                <th>Nombre Usuario</th>
-                <th>Apellido</th>
-                <th>Email</th>
-                <th>Rol</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-            </tr>
-            <?php foreach ($usuarios as $usuario): ?>
+
+        <table>
+            <thead>
                 <tr>
-                    <td><?= $usuario['id_usuario'] ?></td>
-                    <td><?= htmlspecialchars($usuario['nombre_usuario']) ?></td>
-                    <td><?= htmlspecialchars($usuario['apellido']) ?></td>
-                    <td><?= htmlspecialchars($usuario['email']) ?></td>
-                    <td><?= $usuario['id_rol'] == 1 ? 'Admin' : 'Usuario' ?></td>
-                    <td>
-                        <?php
-                        $estados = [1 => 'Habilitado', 2 => 'Eliminado', 3 => 'Suspendido', 4 => 'Pendiente'];
-                        echo $estados[$usuario['id_estado']] ?? 'Desconocido';
-                        ?>
-                    </td>
-                    <td>
-                        <a href="editar_usuario.php?id=<?= $usuario['id_usuario'] ?>">✏️ Editar</a> |
-                        <a href="eliminar_usuario.php?id=<?= $usuario['id_usuario'] ?>" onclick="return confirm('¿Estás seguro que deseas eliminar este usuario?')">🗑️ Eliminar</a>
-                    </td>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
                 </tr>
-            <?php endforeach; ?>
+            </thead>
+            <tbody>
+                <?php foreach ($usuarios as $usuario): ?>
+                    <tr>
+                        <td><?php echo $usuario['id_usuario']; ?></td>
+                        <td><?php echo htmlspecialchars($usuario['nombre_usuario']); ?></td>
+                        <td><?php echo htmlspecialchars($usuario['apellido']); ?></td>
+                        <td><?php echo htmlspecialchars($usuario['email']); ?></td>
+                        <td><?php echo htmlspecialchars($usuario['nombre_rol']); ?></td>
+                        <td><?php echo htmlspecialchars($usuario['nombre_estado']); ?></td>
+                        <td>
+                            <a href="editar_usuario.php?id=<?php echo $usuario['id_usuario']; ?>">✏️ Editar</a>
+                            <a href="eliminar_usuario.php?id=<?php echo $usuario['id_usuario']; ?>" onclick="return confirm('¿Estás seguro de eliminar este usuario?');">🗑️ Eliminar</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
         </table>
     </main>
 </body>
-
 </html>

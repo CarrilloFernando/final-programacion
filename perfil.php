@@ -1,61 +1,46 @@
 <?php
+// perfil.php
 session_start();
-
-// Protección de sesión
 if (!isset($_SESSION['id_usuario'])) {
     header("Location: login/login_principal.php");
     exit();
 }
 
-
-// Cargar datos del usuario
-$id_usuario = $_SESSION['id_usuario'];
-$nombre_usuario = $_SESSION['nombre_usuario'];
-$rol = $_SESSION['rol'];
-
-// Requiere el archivo de conexión y obtiene los datos actualizados
 require_once 'database/db.php';
+
 $db = new Database();
 $conn = $db->obtenerConexion();
 
-// Obtener datos actuales del usuario
+$id_usuario = $_SESSION['id_usuario'];
+$rol = $_SESSION['rol'];
+
+// Obtener datos del usuario actual
 $stmt = $conn->prepare("SELECT nombre_usuario, apellido, email FROM usuarios WHERE id_usuario = :id");
 $stmt->bindParam(':id', $id_usuario);
 $stmt->execute();
-$datos = $stmt->fetch(PDO::FETCH_ASSOC);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Variables para mostrar mensajes
-$mensaje = "";
-$error = "";
+if (!$usuario) {
+    echo "<script>alert('Usuario no encontrado.'); window.location.href = 'index.php';</script>";
+    exit();
+}
 
-// Actualización de datos
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nuevo_nombre = $_POST['nombre_usuario'];
-    $nuevo_apellido = $_POST['apellido'];
-    $nuevo_email = $_POST['email'];
+// Procesar actualización
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nombre_usuario = $_POST['nombre_usuario'];
+    $apellido = $_POST['apellido'];
 
-    // Validación simple
-    if (!empty($nuevo_nombre) && !empty($nuevo_apellido) && !empty($nuevo_email)) {
-        $stmtUpdate = $conn->prepare("UPDATE usuarios SET nombre_usuario = :nombre, apellido = :apellido, email = :email, fecha_modificacion = NOW() WHERE id_usuario = :id");
-        $stmtUpdate->bindParam(':nombre', $nuevo_nombre);
-        $stmtUpdate->bindParam(':apellido', $nuevo_apellido);
-        $stmtUpdate->bindParam(':email', $nuevo_email);
-        $stmtUpdate->bindParam(':id', $id_usuario);
+    $stmt = $conn->prepare("UPDATE usuarios SET nombre_usuario = :nombre_usuario, apellido = :apellido WHERE id_usuario = :id");
+    $stmt->bindParam(':nombre_usuario', $nombre_usuario);
+    $stmt->bindParam(':apellido', $apellido);
+    
+    $stmt->bindParam(':id', $id_usuario);
 
-        if ($stmtUpdate->execute()) {
-            $mensaje = "✅ Datos actualizados correctamente.";
-            $_SESSION['nombre_usuario'] = $nuevo_nombre; // actualizar sesión
-            // recargar datos
-            $datos = [
-                "nombre_usuario" => $nuevo_nombre,
-                "apellido" => $nuevo_apellido,
-                "email" => $nuevo_email
-            ];
-        } else {
-            $error = "❌ Error al actualizar los datos.";
-        }
+    if ($stmt->execute()) {
+        echo "<script>alert('✅ Perfil actualizado correctamente'); window.location.href = 'perfil.php';</script>";
+        exit();
     } else {
-        $error = "❌ Todos los campos son obligatorios.";
+        echo "<script>alert('❌ Error al actualizar perfil');</script>";
     }
 }
 ?>
@@ -64,30 +49,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mi Perfil</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Perfil de Usuario</title>
+    <link rel="stylesheet" href="styles/dashboard.css">
 </head>
 <body>
-<div class="form-container">
-    <h2>🧑 Mi Perfil</h2>
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="index.php">🏠 Inicio</a>
+            <?php if ($rol == 1): ?>
+                <div class="dropdown">
+                    <button class="dropbtn">🔧 Admin</button>
+                    <div class="dropdown-content">
+                        <a href="admin/usuarios.php">👥 Usuarios</a>
+                        <a href="admin/logs.php">📋 Logs</a>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
 
-    <?php if ($mensaje): ?>
-        <p style="color: green;"><?= $mensaje ?></p>
-    <?php endif; ?>
-    <?php if ($error): ?>
-        <p style="color: red;"><?= $error ?></p>
-    <?php endif; ?>
+        <div class="nav-right">
+            <div class="dropdown">
+                <button class="dropbtn">👤 Perfil</button>
+                <div class="dropdown-content">
+                    <a href="persona.php">👥 Ver perfil</a>
+                    <a href="perfil.php">✏️ Editar Perfil</a>
+                    <a href="logout.php">🚪 Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-    <form method="POST" action="">
-        <input type="text" name="nombre_usuario" value="<?= htmlspecialchars($datos['nombre_usuario']) ?>" placeholder="Nombre" required>
-        <input type="text" name="apellido" value="<?= htmlspecialchars($datos['apellido']) ?>" placeholder="Apellido" required>
-        <input type="email" name="email" value="<?= htmlspecialchars($datos['email']) ?>" placeholder="Email" required>
+    <main class="contenido">
+        <h2>Perfil de Usuario</h2>
+        <form method="POST" class="formulario-editar">
+            <label>Nombre de Usuario:</label>
+            <input type="text" name="nombre_usuario" value="<?= htmlspecialchars($usuario['nombre_usuario']) ?>" required>
 
-        <button type="submit">Actualizar Datos</button>
-    </form>
+            <label>Apellido:</label>
+            <input type="text" name="apellido" value="<?= htmlspecialchars($usuario['apellido']) ?>" required>
 
-    <br>
-    <a href="index.php">⬅ Volver al Dashboard</a>
-</div>
+            
+            <button type="submit">Actualizar Perfil</button>
+        </form>
+    </main>
 </body>
 </html>
