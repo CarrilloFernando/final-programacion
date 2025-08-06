@@ -16,7 +16,7 @@ if ($nueva_password !== $confirmar_password) {
 $db = new Database();
 $conn = $db->obtenerConexion();
 
-// Buscar el usuario que corresponde al token
+//Busca el usuario que corresponde al token
 $stmtBuscar = $conn->prepare("SELECT id_usuario FROM usuarios WHERE token_verificacion = :token");
 $stmtBuscar->bindParam(':token', $token);
 $stmtBuscar->execute();
@@ -28,7 +28,7 @@ if ($stmtBuscar->rowCount() === 0) {
 $usuario = $stmtBuscar->fetch(PDO::FETCH_ASSOC);
 $id_usuario = $usuario['id_usuario'];
 
-// Hashear y actualizar contraseña
+//Hashea y actualizar contraseña 
 $passwordHash = password_hash($nueva_password, PASSWORD_DEFAULT);
 
 $stmt = $conn->prepare("UPDATE usuarios SET password = :password, token_verificacion = NULL WHERE id_usuario = :id");
@@ -36,7 +36,8 @@ $stmt->bindParam(':password', $passwordHash);
 $stmt->bindParam(':id', $id_usuario);
 
 if ($stmt->execute()) {
-    // Registrar log
+    
+    // Registra log
     $db->registrarLog("Cambio de contraseña exitoso", $id_usuario);
 
     echo "<script>
@@ -47,5 +48,3 @@ if ($stmt->execute()) {
 } else {
     echo "❌ Error al actualizar la contraseña.";
 }
-?>
-

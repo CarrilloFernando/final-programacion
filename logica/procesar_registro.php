@@ -1,7 +1,7 @@
 <?php
-require_once '../database/db.php'; // ruta a tu clase
+require_once '../database/db.php'; 
 
-// Mostrar errores si los hay
+// Muestra errores si los hay
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $recaptcha = $_POST['g-recaptcha-response'] ?? '';
 
-    // Validar reCAPTCHA
+    // Validar RECAPTCHA
     $secret = '6LdVknMqAAAAAKge_ZujvkGawUMfYBYBLtoIWzjs';
     $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$recaptcha");
     $responseKeys = json_decode($response, true);
@@ -26,16 +26,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("❌ Todos los campos son obligatorios.");
     }
 
-    // Crear objeto y llamar función de inserción
+    // Crea objeto y llamar función de inserción
     $db = new Database();
     $conn = $db->obtenerConexion();
 
     $resultado = $db->insertarUsuario($nombre_usuario, $apellido, $email, $password);
 
-    // Registrar log si fue exitoso
+    // Registra log si fue exitoso
     if ($resultado['status'] === 'success') {
         $db->registrarLog("Registro de nuevo usuario", null);
     }
 
     echo $resultado['message'];
 }
+
+?>

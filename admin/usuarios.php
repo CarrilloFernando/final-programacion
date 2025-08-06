@@ -1,5 +1,5 @@
 <?php
-// usuarios.php
+
 session_start();
 if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] != 1) {
     header("Location: ../login/login_principal.php");

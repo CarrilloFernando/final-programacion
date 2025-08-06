@@ -1,5 +1,5 @@
 <?php
-// editar_usuario.php
+
 session_start();
 if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] != 1) {
     header("Location: ../login/login_principal.php");
@@ -28,7 +28,6 @@ if (!$usuario) {
     exit();
 }
 
-// Procesar formulario de actualización
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre_usuario = $_POST['nombre_usuario'];
     $apellido = $_POST['apellido'];

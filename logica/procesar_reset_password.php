@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $recaptcha = $_POST['g-recaptcha-response'] ?? '';
 
-    // Validar reCAPTCHA
+    // Valida RECAPTCHA
     $secretKey = '6LdVknMqAAAAAKge_ZujvkGawUMfYBYBLtoIWzjs';
     $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$recaptcha");
     $responseKeys = json_decode($response, true);
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $db = new Database();
     $conn = $db->obtenerConexion();
 
-    // Buscar usuario por email
+    // Busca usuario por email
     $stmt = $conn->prepare("SELECT id_usuario FROM usuarios WHERE email = :email AND verificado = 1");
     $stmt->bindParam(':email', $email);
     $stmt->execute();
@@ -37,10 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmtToken->bindParam(':id', $id_usuario);
         $stmtToken->execute();
 
-        // Enviar correo
+        // EnviaA correo
         $db->enviarCorreoRecuperacion($email, $token);
 
-        // Registrar log
+        // Registra log
         $db->registrarLog("Solicitud de recuperación de contraseña enviada", $id_usuario);
 
         echo "✅ Enlace de recuperación enviado.";
