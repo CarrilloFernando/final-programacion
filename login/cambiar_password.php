@@ -10,7 +10,7 @@ if (empty($token)) {
 <head>
     <meta charset="UTF-8">
     <title>Cambiar Contraseña</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="form-container">

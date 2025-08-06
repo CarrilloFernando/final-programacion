@@ -1,0 +1,131 @@
+/* styles.css */
+
+body {
+    font-family: "Segoe UI", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f3f3f3;
+}
+
+.form-container {
+    max-width: 600px;
+    margin: 30px auto;
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+h2,
+h3 {
+  text-align: center;
+}
+
+input,
+button,
+select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 15px;
+}
+
+button {
+  background-color: #0052cc;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #003d99;
+}
+
+a {
+  color: #0052cc;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: #0052cc;
+  color: white;
+}
+
+@media (max-width: 600px) {
+  .form-container {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+
+  th {
+    display: none;
+  }
+
+  td {
+    position: relative;
+    padding-left: 50%;
+  }
+
+  td::before {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    font-weight: bold;
+    color: #333;
+  }
+
+  td:nth-of-type(1)::before {
+    content: "ID";
+  }
+  td:nth-of-type(2)::before {
+    content: "Nombre";
+  }
+  td:nth-of-type(3)::before {
+    content: "Apellido / Acción";
+  }
+  td:nth-of-type(4)::before {
+    content: "Email / Fecha";
+  }
+  td:nth-of-type(5)::before {
+    content: "Rol / IP";
+  }
+  td:nth-of-type(6)::before {
+    content: "Estado";
+  }
+  td:nth-of-type(7)::before {
+    content: "Acciones";
+  }
+}

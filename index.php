@@ -1,6 +1,11 @@
 <?php
 session_start();
 
+// Evitar que el navegador guarde en caché
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
 // Redirigir al login si no hay sesión
 if (!isset($_SESSION['id_usuario'])) {
     header("Location: login/login_principal.php");
@@ -16,7 +21,7 @@ $rol = $_SESSION['rol'];
 <head>
     <meta charset="UTF-8">
     <title>Dashboard - Foro Virtual</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/admin/styles.css">
 </head>
 <body>
     <div class="form-container">
