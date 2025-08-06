@@ -183,4 +183,31 @@ class Database
             return ["status" => "error", "message" => "No se pudo enviar el correo. Error: " . $mail->ErrorInfo];
         }
     }
+
+    public function registrarLog($accion, $id_usuario = null, $ip_origen = null)
+    {
+        if (!$ip_origen) {
+            $ip_origen = $this->obtenerIP(); // usa método interno
+        }
+
+        $query = "INSERT INTO logs (id_usuario, accion, fecha_hora, ip_origen)
+                VALUES (:id_usuario, :accion, NOW(), :ip_origen)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id_usuario', $id_usuario);
+        $stmt->bindParam(':accion', $accion);
+        $stmt->bindParam(':ip_origen', $ip_origen);
+        $stmt->execute();
+    }
+
+    private function obtenerIP()
+    {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            return $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0];
+        } else {
+            return $_SERVER['REMOTE_ADDR'];
+        }
+    }
+    
 }

@@ -37,6 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bindParam(':id', $id_usuario);
 
     if ($stmt->execute()) {
+        $db->registrarLog("Edición de perfil", $id_usuario);
+
         echo "<script>alert('✅ Perfil actualizado correctamente'); window.location.href = 'perfil.php';</script>";
         exit();
     } else {

@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $recaptcha = $_POST['g-recaptcha-response'] ?? '';
 
     // Validar reCAPTCHA
-    $secretKey = '6LdVknMqAAAAAKge_ZujvkGawUMfYBYBLtoIWzjs'; // Reemplaza por tu clave secreta real
+    $secretKey = '6LdVknMqAAAAAKge_ZujvkGawUMfYBYBLtoIWzjs';
     $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$recaptcha");
     $responseKeys = json_decode($response, true);
 
@@ -34,11 +34,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['nombre_usuario'] = $resultado['user']['nombre_usuario'];
         $_SESSION['rol'] = $resultado['user']['id_rol'];
 
-        // Redirigir al dashboard o inicio
+        // Registrar log de inicio exitoso
+        $db->registrarLog("Inicio de sesión exitoso", $_SESSION['id_usuario']);
+
         header("Location: ../index.php");
         exit();
     } else {
+        // Registrar intento fallido de login como evento anónimo
+        $db->registrarLog("Error de inicio de sesión para: $usuario", null);
+
         echo "❌ " . $resultado['message'];
     }
 }
-?>

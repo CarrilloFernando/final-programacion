@@ -28,9 +28,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Crear objeto y llamar función de inserción
     $db = new Database();
-    $conn = $db->obtenerConexion(); // importante para que funcione internamente
+    $conn = $db->obtenerConexion();
 
     $resultado = $db->insertarUsuario($nombre_usuario, $apellido, $email, $password);
+
+    // Registrar log si fue exitoso
+    if ($resultado['status'] === 'success') {
+        $db->registrarLog("Registro de nuevo usuario", null);
+    }
 
     echo $resultado['message'];
 }

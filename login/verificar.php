@@ -19,12 +19,18 @@ if (isset($_GET['token'])) {
     $stmt->execute();
 
     if ($stmt->rowCount() > 0) {
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+        $id_usuario = $usuario['id_usuario'];
+
         // Actualizar verificado, fecha y estado
         $queryUpdate = "UPDATE usuarios SET verificado = 1, fecha_verificacion = NOW(), id_estado = 1, token_verificacion = NULL WHERE token_verificacion = :token";
         $stmtUpdate = $db_con->prepare($queryUpdate);
         $stmtUpdate->bindParam(':token', $token);
 
         if ($stmtUpdate->execute()) {
+            // Registrar log
+            $db->registrarLog("Verificación de cuenta exitosa", $id_usuario);
+
             // Redirigir al login principal
             header("Location: http://localhost/finalprogramacion/login/login_principal.php");
             exit();
