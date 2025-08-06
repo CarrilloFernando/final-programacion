@@ -1,47 +1,55 @@
 <?php
 session_start();
 
-// Evitar que el navegador guarde en caché
-header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache");
-
-// Redirigir al login si no hay sesión
 if (!isset($_SESSION['id_usuario'])) {
     header("Location: login/login_principal.php");
     exit();
 }
 
 $nombre = $_SESSION['nombre_usuario'];
-$rol = $_SESSION['rol'];
+$rol = $_SESSION['rol']; // 1 = admin, 2 = usuario
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard - Foro Virtual</title>
-    <link rel="stylesheet" href="/admin/styles.css">
+    <title>Inicio - Foro Virtual</title>
+    <link rel="stylesheet" href="styles/dashboard.css">
 </head>
 <body>
-    <div class="form-container">
-        <h2>Bienvenido/a, <?php echo htmlspecialchars($nombre); ?> 👋</h2>
 
-        <p>Has iniciado sesión correctamente.</p>
-
-        <hr>
-
-        <h3>Menú</h3>
-        <ul>
-            <li><a href="perfil.php">🧑 Perfil</a></li>
-
+    <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="index.php">🏠 Inicio</a>
             <?php if ($rol == 1): ?>
-                <li><a href="admin/usuarios.php">👥 Administración de Usuarios</a></li>
-                <li><a href="admin/logs.php">📋 Ver Logs</a></li>
+                <div class="dropdown">
+                    <button class="dropbtn">🔧 Admin</button>
+                    <div class="dropdown-content">
+                        <a href="admin/usuarios.php">👥 Usuarios</a>
+                        <a href="admin/logs.php">📋 Logs</a>
+                    </div>
+                </div>
             <?php endif; ?>
+        </div>
 
-            <li><a href="logout.php">🚪 Cerrar Sesión</a></li>
-        </ul>
-    </div>
+        <div class="nav-right">
+            <div class="dropdown">
+                <button class="dropbtn">👤 Perfil</button>
+                <div class="dropdown-content">
+                    <a href="perfil.php">✏️ Editar Perfil</a>
+                    <a href="logout.php">🚪 Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido -->
+    <main class="contenido">
+        <h1>Bienvenido/a, <?= htmlspecialchars($nombre) ?> 👋</h1>
+        <p>Estás logueado como <strong><?= $rol == 1 ? 'Administrador' : 'Usuario' ?></strong>.</p>
+    </main>
+
 </body>
 </html>

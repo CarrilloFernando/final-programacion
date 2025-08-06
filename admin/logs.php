@@ -1,17 +1,18 @@
 <?php
-
-
+// logs.php
+session_start();
+if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] != 1) {
+    header("Location: ../login/login_principal.php");
+    exit();
+}
 require_once '../database/db.php';
+
 $db = new Database();
 $conn = $db->obtenerConexion();
-
-// Obtener logs
-$stmt = $conn->prepare("SELECT l.id_log, u.nombre_usuario, l.accion, l.fecha_hora, l.ip_origen
-                        FROM logs l
-                        LEFT JOIN usuarios u ON l.id_usuario = u.id_usuario
-                        ORDER BY l.fecha_hora DESC");
-$stmt->execute();
+$stmt = $conn->query("SELECT logs.id_log, usuarios.nombre_usuario, logs.accion, logs.fecha_hora, logs.ip_origen FROM logs LEFT JOIN usuarios ON logs.id_usuario = usuarios.id_usuario ORDER BY logs.fecha_hora DESC");
 $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$rol = $_SESSION['rol'];
 ?>
 
 <!DOCTYPE html>
@@ -19,37 +20,54 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Ver Logs</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../styles/dashboard.css">
 </head>
 <body>
-    <div class="form-container">
-        <h2>📋 Registros de Auditoría</h2>
-        <table>
-            <thead>
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="../index.php">🏠 Inicio</a>
+            <?php if ($rol == 1): ?>
+                <div class="dropdown">
+                    <button class="dropbtn">🔧 Admin</button>
+                    <div class="dropdown-content">
+                        <a href="usuarios.php">👥 Usuarios</a>
+                        <a href="logs.php">📋 Logs</a>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="nav-right">
+            <div class="dropdown">
+                <button class="dropbtn">👤 Perfil</button>
+                <div class="dropdown-content">
+                    <a href="../perfil.php">✏️ Editar Perfil</a>
+                    <a href="../logout.php">🚪 Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="contenido">
+        <h2>Registros de Auditoría</h2>
+        <table border="1" cellpadding="10">
+            <tr>
+                <th>ID Log</th>
+                <th>Usuario</th>
+                <th>Acción</th>
+                <th>Fecha y Hora</th>
+                <th>IP Origen</th>
+            </tr>
+            <?php foreach ($logs as $log): ?>
                 <tr>
-                    <th>ID Log</th>
-                    <th>Usuario</th>
-                    <th>Acción</th>
-                    <th>Fecha</th>
-                    <th>IP</th>
+                    <td><?= $log['id_log'] ?></td>
+                    <td><?= htmlspecialchars($log['nombre_usuario'] ?? 'Desconocido') ?></td>
+                    <td><?= htmlspecialchars($log['accion']) ?></td>
+                    <td><?= $log['fecha_hora'] ?></td>
+                    <td><?= $log['ip_origen'] ?></td>
                 </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($logs as $log): ?>
-                    <tr>
-                        <td><?= $log['id_log'] ?></td>
-                        <td><?= htmlspecialchars($log['nombre_usuario'] ?? 'Desconocido') ?></td>
-                        <td><?= $log['accion'] ?></td>
-                        <td><?= $log['fecha_hora'] ?></td>
-                        <td><?= $log['ip_origen'] ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
+            <?php endforeach; ?>
         </table>
-        <br>
-        <a href="../index.php">⬅ Volver al Dashboard</a>
-    </div>
+    </main>
 </body>
 </html>
-
-
